@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Spotify Web Playback SDK Quick Start</title>
+</head>
+<body>
+    <h1>Spotify Web Playback SDK Quick Start</h1>
+    <button id="togglePlay">Toggle Play</button>
+
+    <script src="https://sdk.scdn.co/spotify-player.js"></script>
+    <script>
+        window.onSpotifyWebPlaybackSDKReady = () => {
+            const access_token = 'BQBUnQk0LZftHTVFf3eDnrmx9IV2LEgVaBLWJUSVqIVrA0q1LSinuaCaIAzw1qZwCUv1Ciufwj8XMoFjUH1dOZYSHJmkJPdDGSWoQbcyW-a9m60laKEqGwU8K9TwZmhlkpEPIHO0hUda2m9_2_oydWhsg-G9k6kAQFNhfxPsQUYEJ26UNHKCSMX5EaTJ2q2ybu6w';
+            const player = new Spotify.Player({
+                name: 'Web Playback SDK Quick Start Player',
+                getOAuthToken: cb => { cb(access_token); },
+                volume: 1
+            });
+
+            let spotify_uri = 'spotify:track:7xGfFoTpQ2E7fRF5lN10tr';
+
+            document.getElementById('togglePlay').onclick = function() {
+                console.log("toggle!")
+                player.togglePlay();
+            };
+
+            // Ready
+            player.addListener('ready', ({ device_id }) => {
+                console.log('Ready with Device ID', device_id);
+                fetch(`https://api.spotify.com/v1/me/player/play?device_id=${device_id}`, {
+                    method: 'PUT',
+                    body: JSON.stringify({ uris: [spotify_uri] }),
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${access_token}`
+                    },
+                });
+            });
+
+            // Not Ready
+            player.addListener('not_ready', ({ device_id }) => {
+                console.log('Device ID has gone offline', device_id);
+            });
+
+            player.addListener('initialization_error', ({ message }) => {
+                console.error(message);
+            });
+
+            player.addListener('authentication_error', ({ message }) => {
+                console.error(message);
+            });
+
+            player.addListener('account_error', ({ message }) => {
+                console.error(message);
+            });
+
+            player.addListener('player_state_changed', ({
+                position,
+                duration,
+                track_window: { current_track }
+            }) => {
+                console.log('Currently Playing', current_track);
+                console.log('Position in Song', position);
+                console.log('Duration of Song', duration);
+            });
+
+            player.addListener('autoplay_failed', () => {
+                console.log('Autoplay is not allowed by the browser autoplay rules');
+            });
+
+            player.on('playback_error', ({ message }) => {
+                console.error('Failed to perform playback', message);
+            });
+
+            const connect = player.connect();
+            console.log(connect);
+
+            connect.then(success => {
+                    if (success) {
+                        console.log('The Web Playback SDK successfully connected to Spotify!');
+                    } else {
+                        console.log('The Web Playback SDK could not connect to Spotify!');
+                    }
+                })
+                .catch(e => {
+                    console.error(e);
+                });
+        }
+    </script>
+</body>
+</html>

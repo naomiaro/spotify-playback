@@ -1,0 +1,19 @@
+{
+  "name": "spotify-playback",
+  "version": "1.0.0",
+  "description": "Experiments with the Web API",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/naomiaro/spotify-playback.git"
+  },
+  "author": "Naomi Aro",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/naomiaro/spotify-playback/issues"
+  },
+  "homepage": "https://github.com/naomiaro/spotify-playback#readme"
+}
